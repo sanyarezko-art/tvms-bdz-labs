@@ -1,4 +1,4 @@
-// Хелперы для построения блоков
+// Компоненты UI
 
 export function el(html) {
   const t = document.createElement("template");
@@ -6,79 +6,123 @@ export function el(html) {
   return t.content.firstElementChild;
 }
 
+/* Задача БДЗ — карточка с номером, условием, решением, ответом, кодом */
 export function taskBlock({ num, title, statement, solutionHtml, answerHtml, code, extra = "" }) {
   return `
-  <article class="task">
+  <article class="task" id="task-${num}">
     <div class="task-header">
-      <div class="flex items-baseline">
-        <span class="task-num">${num}</span>
-        <h3 class="text-lg font-semibold text-white">${title}</h3>
-      </div>
+      <span class="task-num">${num}.</span>
+      <h3>${title}</h3>
     </div>
     <div class="task-body">
-      <div class="task-statement"><p>${statement}</p></div>
+      <div class="task-statement">${statement}</div>
 
-      <div class="solution-title">Решение</div>
+      <div class="task-section-label">Решение</div>
       <div class="solution-text">${solutionHtml}</div>
-
-      ${answerHtml ? `<div class="answer-box">${answerHtml}</div>` : ""}
 
       ${extra}
 
-      ${code ? codeBlock(code) : ""}
-    </div>
-  </article>`;
-}
-
-export function sectionBlock({ title, body, code = "", subtitle = "" }) {
-  return `
-  <article class="task">
-    <div class="task-header">
-      <h3 class="text-lg font-semibold text-white">${title}</h3>
-      ${subtitle ? `<div class="text-sm text-slate-400 mt-1">${subtitle}</div>` : ""}
-    </div>
-    <div class="task-body">
-      ${body}
-      ${code ? codeBlock(code) : ""}
-    </div>
-  </article>`;
-}
-
-export function codeBlock(code, title = "python") {
-  return `
-  <div class="code-block editor-only">
-    <div class="code-bar">
-      <div class="left">
-        <div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-        <span class="title">${title}.py</span>
+      <div class="answer-banner">
+        <span class="ans-label">Ответ</span>
+        <span class="ans-value">${answerHtml}</span>
       </div>
-      <button class="run-btn">
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-        Запустить
-      </button>
+
+      <div class="code-block code-area">
+        <div class="code-toolbar">
+          <span class="tag">python · проверка вычислений</span>
+          <button class="run-btn">▶ Запустить</button>
+        </div>
+        <textarea class="code-editor" spellcheck="false" rows="${Math.max(3, code.split("\n").length)}">${escapeHtml(code)}</textarea>
+        <div class="code-output"></div>
+      </div>
     </div>
-    <textarea class="code-editor" spellcheck="false">${escapeAttr(code)}</textarea>
+  </article>`;
+}
+
+/* Раздел лабораторной работы */
+export function sectionBlock({ num = "", title, subtitle = "", body }) {
+  const numHtml = num !== "" ? `<span class="section-num">§ ${num}</span>` : "";
+  return `
+  <article class="section-block">
+    <div class="section-head">
+      ${numHtml}
+      <div>
+        <h3>${title}</h3>
+        ${subtitle ? `<div class="text-sm text-slate-400 font-serif italic mt-0.5">${subtitle}</div>` : ""}
+      </div>
+    </div>
+    <div class="task-body">${body}</div>
+  </article>`;
+}
+
+/* Рисунок */
+export function figure(src, caption) {
+  return `<figure class="fig">
+    <img src="${src}" alt="${caption.replace(/<[^>]+>/g, "")}" loading="lazy">
+    <figcaption>${caption}</figcaption>
+  </figure>`;
+}
+
+/* Сетка статистик */
+export function statsGrid(items) {
+  return `<div class="stats-grid">
+    ${items.map(({label, value}) => `
+      <div class="stat-cell">
+        <div class="lbl">${label}</div>
+        <div class="val">${value}</div>
+      </div>`).join("")}
+  </div>`;
+}
+
+/* Таблица */
+export function table(headers, rows, opts = {}) {
+  const hCells = headers.map(h => `<th>${h}</th>`).join("");
+  const bRows = rows.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join("")}</tr>`).join("");
+  let foot = "";
+  if (opts.footer) {
+    foot = `<tfoot><tr>${opts.footer.map(c => `<td>${c}</td>`).join("")}</tr></tfoot>`;
+  }
+  return `<div class="tbl-wrap"><table class="tbl">
+    <thead><tr>${hCells}</tr></thead>
+    <tbody>${bRows}</tbody>
+    ${foot}
+  </table></div>`;
+}
+
+/* Блок-выполняемый код (без задачи) */
+export function codeBlock(code, label = "python") {
+  return `<div class="code-block code-area">
+    <div class="code-toolbar">
+      <span class="tag">${label}</span>
+      <button class="run-btn">▶ Запустить</button>
+    </div>
+    <textarea class="code-editor" spellcheck="false" rows="${Math.max(3, code.split("\n").length)}">${escapeHtml(code)}</textarea>
     <div class="code-output"></div>
   </div>`;
 }
 
-export function figure(src, caption) {
-  return `<div class="figure"><img src="${src}" alt="${caption}"/><div class="figure-caption">${caption}</div></div>`;
+/* Заметка / комментарий */
+export function note({ title = "Замечание", body, kind = "" }) {
+  return `<div class="note ${kind}">
+    <div class="note-title">${title}</div>
+    <div>${body}</div>
+  </div>`;
 }
 
-export function statsGrid(items) {
-  return `<div class="stats-grid">${items.map(i =>
-    `<div class="stat-card"><div class="label">${i.label}</div><div class="value">${i.value}</div></div>`
-  ).join("")}</div>`;
+/* Подзаголовок секции (h-section) */
+export function h(num, text) {
+  return `<div class="h-section"><span class="h-num">${num}.</span><span class="h-text">${text}</span></div>`;
 }
 
-export function escapeAttr(s) {
-  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+/* TOC */
+export function toc(items) {
+  return `<div class="toc">
+    <div class="toc-title">Содержание раздела</div>
+    <ol>${items.map(it => `<li><a href="${it.href || '#'}">${it.text}</a></li>`).join("")}</ol>
+  </div>`;
 }
 
-export function table(headers, rows) {
-  return `<div class="overflow-x-auto"><table class="stat-table">
-    <thead><tr>${headers.map(h => `<th>${h}</th>`).join("")}</tr></thead>
-    <tbody>${rows.map(r => `<tr>${r.map(c => `<td class="num">${c}</td>`).join("")}</tr>`).join("")}</tbody>
-  </table></div>`;
+function escapeHtml(s) {
+  return String(s)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }

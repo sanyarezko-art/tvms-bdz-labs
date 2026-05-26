@@ -1,4 +1,4 @@
-import { sectionBlock, figure, statsGrid, table } from "./_components.js";
+import { sectionBlock, figure, statsGrid, table, codeBlock, note, h, toc } from "./_components.js";
 import { D } from "./_data.js";
 
 const d = D.lab1;
@@ -13,163 +13,128 @@ export function renderLab1(container) {
   // Таблица интервалов
   const intRows = d.counts.map((c, i) => [
     i+1,
-    `[${d.edges[i].toFixed(3)};  ${d.edges[i+1].toFixed(3)}]`,
+    `[${d.edges[i].toFixed(3)};\u00A0${d.edges[i+1].toFixed(3)}]`,
     c,
     d.rel[i].toFixed(3),
     d.centers[i].toFixed(3)
   ]);
 
   container.innerHTML = `
+  ${toc([
+    {text:"Исходные данные и вариационный ряд", href:"#"},
+    {text:"Статистический ряд и группировка", href:"#"},
+    {text:"Гистограмма, полигон и эмпирическая ф.р.", href:"#"},
+    {text:"Числовые характеристики выборки", href:"#"},
+  ])}
+
   ${sectionBlock({
-    title: "1. Исходные данные",
-    subtitle: `Вариант 16, объём выборки $n=50$ (приложение 1 практикума)`,
+    num:"1", title:"Исходные данные",
+    subtitle:"Вариант 16, объём выборки $n=50$ (приложение 1 практикума)",
     body: `
       <p class="solution-text">Выборка из приложения 1, столбец $N=16$:</p>
       <pre class="text-xs font-mono bg-ink-950 border border-ink-800 rounded p-3 overflow-x-auto whitespace-pre-wrap text-slate-300">${sample}</pre>
-      <p class="solution-text mt-3">Вариационный ряд (упорядоченные значения):</p>
+      ${statsGrid([
+        {label:"n", value:50},
+        {label:"min", value:d.min},
+        {label:"max", value:d.max},
+        {label:"размах R", value:d.R},
+        {label:"уник. значений", value:d.uniq.length},
+      ])}
+    `
+  })}
+
+  ${sectionBlock({
+    num:"2", title:"Вариационный и статистический ряды",
+    body: `
+      <p class="solution-text"><b>Вариационный ряд</b> — выборка, упорядоченная по возрастанию:</p>
       <pre class="text-xs font-mono bg-ink-950 border border-ink-800 rounded p-3 overflow-x-auto whitespace-pre-wrap text-slate-300">${varRow}</pre>
-      <p class="solution-text mt-3">Размах выборки: $R = x_{(n)} - x_{(1)} = 14 - 2 = 12$.</p>
-    `,
-    code:
-`import numpy as np
-X = np.array([11,4,2,10,7,8,9,5,4,10,2,9,11,7,8,5,11,11,14,2,
-              10,7,10,6,8,7,13,2,8,7,6,10,8,6,4,9,11,6,8,3,
-              5,10,9,9,6,3,8,10,11,4])
-print(f"n = {len(X)}, R = {X.max() - X.min()}")
-print(f"min = {X.min()}, max = {X.max()}")
-print(f"вариационный ряд:\\n{np.sort(X)}")`
+      <p class="solution-text mt-3"><b>Статистический ряд</b> (значение $x_i$, абсолютная частота $n_i$, относительная частота $w_i = n_i/n$):</p>
+      ${table(["$x_i$","$n_i$","$w_i = n_i/n$"], statRows)}
+      ${codeBlock(`import numpy as np
+x = np.array([${d.sample.join(", ")}])
+print("вариационный ряд:", np.sort(x))
+vals, cnts = np.unique(x, return_counts=True)
+print("статистический ряд:")
+for v, c in zip(vals, cnts):
+    print(f"  x={v:>3}: n={c}, w={c/len(x):.3f}")`, "python")}
+    `
   })}
 
   ${sectionBlock({
-    title: "2. Статистический ряд",
-    subtitle: "Уникальные значения и их относительные частоты",
+    num:"3", title:"Группировка на 7 интервалов",
     body: `
-      ${table(["$x_i$", "$n_i$", "$w_i = n_i/n$"], statRows)}
-    `,
-    code:
-`import numpy as np
-X = np.array([11,4,2,10,7,8,9,5,4,10,2,9,11,7,8,5,11,11,14,2,
-              10,7,10,6,8,7,13,2,8,7,6,10,8,6,4,9,11,6,8,3,
-              5,10,9,9,6,3,8,10,11,4])
-u, n = np.unique(X, return_counts=True)
-print("x_i\\tn_i\\tw_i")
-for ui, ni in zip(u, n):
-    print(f"{ui}\\t{ni}\\t{ni/len(X):.3f}")`
+      <p class="solution-text">Длина интервала: $h = \\dfrac{x_\\max - x_\\min}{7} = \\dfrac{${d.R}}{7} = ${(d.R/7).toFixed(4)}$.</p>
+      ${table(["№","Интервал","$n_i$","$w_i = n_i/n$","Центр $c_i$"], intRows)}
+      ${note({title:"Замечание",
+        body:"Граничные элементы выборки относятся к интервалу слева (стандартное правило); первый интервал включает левую границу."})}
+    `
   })}
 
   ${sectionBlock({
-    title: "3. Группировка в 7 интервалов",
-    subtitle: `Шаг $h = R/7 = 12/7 \\approx 1{,}714$`,
+    num:"4", title:"Гистограмма и полигон относительных частот",
     body: `
-      ${table(["№", "$[a;b]$", "$n_i$", "$w_i$", "середина"], intRows)}
-    `,
-    code:
-`import numpy as np
-X = np.array([11,4,2,10,7,8,9,5,4,10,2,9,11,7,8,5,11,11,14,2,
-              10,7,10,6,8,7,13,2,8,7,6,10,8,6,4,9,11,6,8,3,
-              5,10,9,9,6,3,8,10,11,4])
-k = 7
-edges = np.linspace(X.min(), X.max(), k+1)
-counts, _ = np.histogram(X, bins=edges)
-centers = (edges[:-1] + edges[1:])/2
-print("№  [a;b]\\t\\tn_i  w_i")
-for i in range(k):
-    print(f"{i+1}  [{edges[i]:.3f}; {edges[i+1]:.3f}]  {counts[i]}  {counts[i]/len(X):.3f}")`
+      ${figure("./public/figures/lab1_hist_polygon.png",
+        "<b>Рис. 1.1.</b> Гистограмма частот и полигон относительных частот для семи интервалов группировки")}
+      ${codeBlock(`import numpy as np, matplotlib.pyplot as plt
+x = np.array([${d.sample.join(", ")}])
+edges = np.linspace(x.min(), x.max(), 8)
+counts, _ = np.histogram(x, bins=edges)
+centers = (edges[:-1] + edges[1:]) / 2
+h = edges[1] - edges[0]
+rel = counts / len(x)
+fig, ax = plt.subplots(figsize=(9, 5))
+ax.bar(centers, rel/h, width=h*0.9, color="#6366f1", alpha=0.6, edgecolor="#ef4444", label="гистограмма")
+ax.plot(centers, rel/h, "o-", color="#ef4444", lw=2, ms=7, label="полигон")
+ax.set_xlabel("x"); ax.set_ylabel("плотность w/h"); ax.legend(frameon=False)
+ax.set_title("Гистограмма и полигон выборки (вариант 16)")
+plt.show()`, "python · построение графика")}
+    `
   })}
 
   ${sectionBlock({
-    title: "4. Гистограмма и полигон относительных частот",
+    num:"5", title:"Эмпирическая функция распределения",
     body: `
-      <div class="presentation-only">${figure("./public/figures/lab1_hist_polygon.png", "Рис. 1. Гистограмма плотности и полигон частот.")}</div>
-      <p class="hint">В режиме редактирования — запустите код ниже, чтобы заново построить график.</p>
-    `,
-    code:
-`import numpy as np, matplotlib.pyplot as plt
-X = np.array([11,4,2,10,7,8,9,5,4,10,2,9,11,7,8,5,11,11,14,2,
-              10,7,10,6,8,7,13,2,8,7,6,10,8,6,4,9,11,6,8,3,
-              5,10,9,9,6,3,8,10,11,4])
-k = 7
-edges = np.linspace(X.min(), X.max(), k+1)
-counts, _ = np.histogram(X, bins=edges)
-centers = (edges[:-1] + edges[1:])/2
-h = (X.max() - X.min())/k
-rel = counts / len(X)
-
-fig, ax = plt.subplots(figsize=(8,4.5))
-ax.bar(centers, rel/h, width=h*0.95, color="#6366f1", alpha=0.55, edgecolor="white", label="гистограмма")
-ax.plot(centers, rel/h, "o-", color="#ef4444", lw=2, ms=6, label="полигон")
-ax.set_xlabel("x"); ax.set_ylabel("плотность отн. частоты")
-ax.set_title("Гистограмма и полигон частот")
-ax.legend(frameon=False)
-plt.show()`
+      <p class="solution-text">$F_n(x) = \\dfrac{1}{n}\\sum_{i=1}^{n} \\mathbb{1}\\{x_i \\le x\\}$ — ступенчатая функция со скачком $1/n$ в каждой точке выборки.</p>
+      ${figure("./public/figures/lab1_empirical_cdf.png",
+        "<b>Рис. 1.2.</b> Эмпирическая функция распределения $F_n(x)$")}
+    `
   })}
 
   ${sectionBlock({
-    title: "5. Эмпирическая функция распределения",
+    num:"6", title:"Числовые характеристики выборки",
     body: `
-      <div class="presentation-only">${figure("./public/figures/lab1_empirical_cdf.png", "Рис. 2. F*(x) — негруппированная (ступенчатая) и группированная (линейная).")}</div>
-    `,
-    code:
-`import numpy as np, matplotlib.pyplot as plt
-X = np.array([11,4,2,10,7,8,9,5,4,10,2,9,11,7,8,5,11,11,14,2,
-              10,7,10,6,8,7,13,2,8,7,6,10,8,6,4,9,11,6,8,3,
-              5,10,9,9,6,3,8,10,11,4])
-xs = np.sort(X); ys = np.arange(1, len(xs)+1)/len(xs)
-
-edges = np.linspace(X.min(), X.max(), 8)
-counts, _ = np.histogram(X, bins=edges)
-cum = np.concatenate(([0], np.cumsum(counts/len(X))))
-
-fig, ax = plt.subplots(figsize=(8,4.5))
-ax.step(np.concatenate(([xs[0]-1], xs)), np.concatenate(([0], ys)),
-        where="post", color="#6366f1", lw=2.2, label="F* (негруп.)")
-ax.plot(edges, cum, "o-", color="#10b981", lw=2, ms=6, label="F* (группир.)")
-ax.set_title("Эмпирическая функция распределения")
-ax.legend(frameon=False)
-plt.show()`
-  })}
-
-  ${sectionBlock({
-    title: "6. Числовые характеристики",
-    body: `
-      <h4 class="font-semibold text-white mt-1 mb-2">Негруппированная выборка</h4>
+      <h4 class="text-white font-semibold mt-2 mb-2">Негруппированная выборка</h4>
       ${statsGrid([
-        {label:"Среднее $\\bar{x}$", value:d.mean.toFixed(4)},
-        {label:"Смещ. дисп. $D_в$", value:d.D_b.toFixed(4)},
-        {label:"Несмещ. $s^2$", value:d.D_unb.toFixed(4)},
-        {label:"СКО $s$", value:d.s.toFixed(4)},
-        {label:"Медиана", value:d.median.toFixed(2)},
-        {label:"Мода", value:d.mode},
+        {label:"$\\bar{x}$ (среднее)", value:d.mean.toFixed(4)},
+        {label:"$D_x$ (смещ.)", value:d.D.toFixed(4)},
+        {label:"$S^2$ (несм.)", value:d.S2.toFixed(4)},
+        {label:"$s$ (СКО)", value:d.s.toFixed(4)},
+        {label:"медиана", value:d.median},
+        {label:"мода", value:d.mode},
       ])}
-      <h4 class="font-semibold text-white mt-4 mb-2">Группированная выборка (по серединам интервалов)</h4>
+      <h4 class="text-white font-semibold mt-4 mb-2">Группированная выборка (7 интервалов)</h4>
       ${statsGrid([
-        {label:"Среднее $\\bar{x}_г$", value:d.mean_g.toFixed(4)},
-        {label:"Смещ. дисп.", value:d.D_b_g.toFixed(4)},
-        {label:"Несмещ. $s^2_г$", value:d.D_unb_g.toFixed(4)},
-        {label:"СКО $s_г$", value:d.s_g.toFixed(4)},
-        {label:"Медиана", value:d.median_g.toFixed(3)},
-        {label:"Мода", value:d.mode_g.toFixed(3)},
+        {label:"$\\bar{x}_g$", value:d.mean_g.toFixed(4)},
+        {label:"$S^2_g$", value:d.S2_g.toFixed(4)},
+        {label:"$s_g$", value:d.s_g.toFixed(4)},
       ])}
-      <p class="solution-text mt-4">
-        Формулы (для негруппированной): $\\bar{x}=\\tfrac{1}{n}\\sum x_i$;
-        $D_в=\\tfrac{1}{n}\\sum (x_i-\\bar{x})^2$;
-        $s^2=\\tfrac{n}{n-1}D_в$.
-        Для группированной по серединам $\\tilde{x}_i$ интервалов:
-        $\\bar{x}_г=\\tfrac{1}{n}\\sum \\tilde{x}_i n_i$, аналогично для дисперсии.
-      </p>
-    `,
-    code:
-`import numpy as np
-X = np.array([11,4,2,10,7,8,9,5,4,10,2,9,11,7,8,5,11,11,14,2,
-              10,7,10,6,8,7,13,2,8,7,6,10,8,6,4,9,11,6,8,3,
-              5,10,9,9,6,3,8,10,11,4])
-from scipy import stats
-print(f"среднее   = {X.mean():.4f}")
-print(f"D смещ.   = {X.var(ddof=0):.4f}")
-print(f"s^2 нес.  = {X.var(ddof=1):.4f}")
-print(f"s         = {X.std(ddof=1):.4f}")
-print(f"медиана   = {np.median(X)}")
-print(f"мода      = {stats.mode(X, keepdims=True).mode[0]}")`
+      ${codeBlock(`import numpy as np
+x = np.array([${d.sample.join(", ")}])
+print(f"среднее = {x.mean():.4f}")
+print(f"D (смещ) = {x.var():.4f}")
+print(f"S^2 (несм) = {x.var(ddof=1):.4f}")
+print(f"s = {x.std(ddof=1):.4f}")
+print(f"медиана = {np.median(x)}")
+vals, cnts = np.unique(x, return_counts=True)
+print(f"мода = {vals[cnts.argmax()]} (частота {cnts.max()})")`, "python")}
+    `
+  })}
+
+  ${sectionBlock({
+    num: "▣", title: "Вывод",
+    body: `
+      <p class="solution-text">Выборочное среднее $\\bar{x} = ${d.mean.toFixed(2)}$, $S^2 \\approx ${d.S2.toFixed(2)}$. Распределение симметрично — мода и медиана близки ($${d.mode}$ и $${d.median}$). Гистограмма имеет колоколообразную форму, что позволяет выдвинуть гипотезу о нормальности (проверяется в ЛР-3).</p>
+    `
   })}
   `;
 }

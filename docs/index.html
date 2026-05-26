@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ТВиМС — БДЗ-1 и Лабораторные · вариант 16 · Миронов А.А.</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E📊%3C/text%3E%3C/svg%3E">
+<title>ТВиМС — БДЗ и Лабораторные · вариант 16 · Миронов А.А.</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.92em' font-size='90'%3E∑%3C/text%3E%3C/svg%3E">
 
 <!-- Tailwind -->
 <script src="https://cdn.tailwindcss.com"></script>
@@ -13,18 +13,14 @@ tailwind.config = {
   theme: {
     extend: {
       colors: {
-        ink: { 950: '#0b0d12', 900: '#11131b', 800: '#1a1d29', 700: '#262a3a', 600: '#384055', 500: '#5b667f' },
-        accent: { DEFAULT: '#6366f1', light: '#a5b4fc', dark: '#4338ca' },
-        ok: '#10b981', warn: '#f59e0b', bad: '#ef4444',
+        ink: { 950: '#0a0c12', 900: '#10131c', 800: '#161a25', 700: '#1f2533', 600: '#2a3142', 500: '#5b6477' },
+        accent: { DEFAULT: '#6366f1', light: '#818cf8', dark: '#4338ca' },
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
         mono: ['JetBrains Mono', 'ui-monospace', 'monospace'],
-        serif: ['"Source Serif 4"', 'Georgia', 'serif'],
+        serif: ['"Source Serif 4"', '"PT Serif"', 'Georgia', 'serif'],
       },
-      typography: ({theme}) => ({
-        invert: { css: { '--tw-prose-body': '#d1d5db' } }
-      })
     }
   }
 }
@@ -33,13 +29,12 @@ tailwind.config = {
 <!-- Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Source+Serif+4:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Source+Serif+4:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
 
 <!-- KaTeX -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
-        onload="renderMathInDocument()"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
 
 <!-- Pyodide -->
 <script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
@@ -49,29 +44,34 @@ tailwind.config = {
 <body class="bg-ink-950 text-slate-200 antialiased">
 
 <!-- ====================== HEADER ====================== -->
-<header class="sticky top-0 z-40 backdrop-blur-xl bg-ink-950/80 border-b border-ink-800">
+<header class="sticky top-0 z-40 backdrop-blur-xl bg-ink-950/85 border-b border-ink-800">
   <div class="max-w-7xl mx-auto px-6 py-3 flex items-center gap-4">
-    <div class="flex items-center gap-3">
-      <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-accent to-accent-dark grid place-items-center font-bold text-white">σ</div>
+    <a href="#home" class="flex items-center gap-3 group">
+      <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-accent via-accent-light to-accent-dark grid place-items-center font-bold text-white text-xl shadow-lg shadow-accent/20 font-serif">σ</div>
       <div class="leading-tight">
-        <div class="font-semibold text-sm text-white">ТВиМС · вариант 16</div>
-        <div class="text-xs text-slate-400">Миронов Артём Андреевич, ИКТ-23</div>
+        <div class="font-semibold text-sm text-white">ТВиМС · НИУ МИЭТ</div>
+        <div class="text-xs text-slate-400">вариант 16 · Миронов А.А. · ИКТ-23</div>
       </div>
-    </div>
+    </a>
 
-    <nav class="ml-6 hidden md:flex items-center gap-1 text-sm">
+    <nav class="ml-auto md:ml-6 hidden md:flex items-center gap-1 text-sm">
       <a href="#home" class="nav-link" data-section="home">Главная</a>
-      <a href="#bdz"  class="nav-link" data-section="bdz">БДЗ-1</a>
+      <a href="#bdz1" class="nav-link" data-section="bdz1">БДЗ-1</a>
+      <a href="#bdz3" class="nav-link" data-section="bdz3">БДЗ-3</a>
+      <span class="text-slate-700 mx-1">·</span>
       <a href="#lab1" class="nav-link" data-section="lab1">ЛР-1</a>
       <a href="#lab2" class="nav-link" data-section="lab2">ЛР-2</a>
       <a href="#lab3" class="nav-link" data-section="lab3">ЛР-3</a>
       <a href="#lab4" class="nav-link" data-section="lab4">ЛР-4</a>
     </nav>
 
-    <div class="ml-auto flex items-center gap-2">
-      <div id="py-status" class="text-xs px-2.5 py-1 rounded-full bg-ink-800 text-slate-400 hidden md:block">
+    <div class="ml-auto md:ml-0 flex items-center gap-2">
+      <div id="py-status" class="text-xs px-2.5 py-1 rounded-full bg-ink-800 text-slate-400 hidden md:flex items-center">
         <span class="inline-block w-1.5 h-1.5 rounded-full bg-slate-500 mr-1.5"></span>Pyodide ожидание
       </div>
+      <button id="print-btn" title="Печать / сохранить как PDF" class="px-2.5 py-1.5 text-sm rounded-lg bg-ink-800 hover:bg-ink-700 transition hidden md:flex items-center gap-1.5" onclick="window.print()">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>
+      </button>
       <button id="mode-toggle" class="px-3 py-1.5 text-sm rounded-lg bg-ink-800 hover:bg-ink-700 transition flex items-center gap-2">
         <svg id="mode-icon" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h20v14H2z"/><path d="M8 21h8M12 17v4"/></svg>
         <span id="mode-label">Презентация</span>
@@ -79,99 +79,148 @@ tailwind.config = {
     </div>
   </div>
   <div class="md:hidden border-t border-ink-800 px-6 py-2 overflow-x-auto whitespace-nowrap text-sm">
-    <a href="#home" class="nav-link mr-3">Главная</a>
-    <a href="#bdz"  class="nav-link mr-3">БДЗ-1</a>
-    <a href="#lab1" class="nav-link mr-3">ЛР-1</a>
-    <a href="#lab2" class="nav-link mr-3">ЛР-2</a>
-    <a href="#lab3" class="nav-link mr-3">ЛР-3</a>
+    <a href="#home" class="nav-link mr-1">Главная</a>
+    <a href="#bdz1"  class="nav-link mr-1">БДЗ-1</a>
+    <a href="#bdz3"  class="nav-link mr-1">БДЗ-3</a>
+    <a href="#lab1" class="nav-link mr-1">ЛР-1</a>
+    <a href="#lab2" class="nav-link mr-1">ЛР-2</a>
+    <a href="#lab3" class="nav-link mr-1">ЛР-3</a>
     <a href="#lab4" class="nav-link">ЛР-4</a>
   </div>
 </header>
 
 <main id="app" class="max-w-7xl mx-auto px-6 py-10">
 
-<!-- ============== HOME ============== -->
-<section id="home" class="page">
-  <div class="grid md:grid-cols-2 gap-10 items-center">
-    <div>
-      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/10 border border-accent/30 text-accent-light text-xs font-medium mb-4">
-        НИУ МИЭТ · 2026 · ИКТ-23
-      </div>
-      <h1 class="text-4xl md:text-5xl font-bold text-white leading-tight mb-4">
-        Теория вероятностей<br>и математическая статистика
-      </h1>
-      <p class="text-slate-400 text-lg mb-6">
-        БДЗ-1 — 10 задач теории вероятностей.<br>
-        Лабораторные работы №1–4 — статистическая обработка, моделирование, проверка гипотез, регрессия.
-      </p>
-      <p class="text-slate-300 mb-8">Вариант <span class="font-bold text-white">№16</span> — Миронов Артём Андреевич</p>
+<!-- ============== HOME (обложка) ============== -->
+<section id="home" class="page relative">
+  <div class="hero-grid-bg"></div>
 
-      <div class="flex flex-wrap gap-3">
-        <a href="#bdz" class="px-5 py-2.5 rounded-lg bg-accent hover:bg-accent-dark transition text-white font-medium">→ К БДЗ-1</a>
-        <a href="#lab1" class="px-5 py-2.5 rounded-lg bg-ink-800 hover:bg-ink-700 transition text-white">→ Лабораторные</a>
+  <div class="relative cover-frame">
+    <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-10">
+      <div>
+        <div class="cover-univ">Национальный исследовательский университет</div>
+        <div class="cover-univ text-base font-medium text-white not-italic">«МИЭТ»</div>
+        <div class="cover-univ mt-1">кафедра высшей математики № 1</div>
+      </div>
+      <div class="text-right text-slate-400 text-sm font-mono leading-relaxed">
+        учебный год 2025/2026<br>
+        курс «Теория вероятностей<br>и математическая статистика»
       </div>
     </div>
-    <div class="grid grid-cols-2 gap-4">
-      <a href="#bdz" class="card group">
-        <div class="text-3xl mb-2">📐</div>
-        <div class="font-semibold text-white">БДЗ-1</div>
-        <div class="text-sm text-slate-400">10 задач · вероятность</div>
+
+    <div class="my-12 md:my-16">
+      <div class="text-accent-light text-xs font-semibold tracking-[.2em] uppercase mb-3">отчёт по дисциплине</div>
+      <h1 class="cover-title">Большие домашние задания<br>и лабораторные работы №&nbsp;1—4</h1>
+      <p class="cover-sub mt-6">вариант&nbsp;№&nbsp;16</p>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-6 mt-8 text-sm">
+      <div>
+        <div class="text-slate-500 text-xs uppercase tracking-wider mb-1">Выполнил</div>
+        <div class="text-white text-lg font-medium">Миронов Артём Андреевич</div>
+        <div class="text-slate-400">группа ИКТ-23</div>
+      </div>
+      <div class="md:text-right">
+        <div class="text-slate-500 text-xs uppercase tracking-wider mb-1">Москва, Зеленоград</div>
+        <div class="text-white text-lg font-medium font-serif">2026</div>
+      </div>
+    </div>
+
+    <div class="mt-12 flex flex-wrap gap-3">
+      <a href="#bdz1" class="px-5 py-2.5 rounded-lg bg-accent hover:bg-accent-dark transition text-white font-medium">К БДЗ-1 →</a>
+      <a href="#bdz3" class="px-5 py-2.5 rounded-lg bg-ink-800 hover:bg-ink-700 transition text-white">К БДЗ-3</a>
+      <a href="#lab1" class="px-5 py-2.5 rounded-lg bg-ink-800 hover:bg-ink-700 transition text-white">Лабораторные</a>
+      <button onclick="window.print()" class="px-5 py-2.5 rounded-lg border border-ink-700 hover:bg-ink-800 transition text-slate-300">
+        🖨️ Печать / PDF
+      </button>
+    </div>
+  </div>
+
+  <!-- Карта содержимого -->
+  <div class="mt-12">
+    <div class="eyebrow mb-3">Содержание</div>
+    <div class="grid md:grid-cols-3 gap-4">
+      <a href="#bdz1" class="card">
+        <div class="card-num">№ 1</div>
+        <div class="text-2xl mb-2">📐</div>
+        <div class="font-serif font-semibold text-white text-lg">Большое домашнее задание №&nbsp;1</div>
+        <div class="text-sm text-slate-400 mt-1">10 задач теории вероятностей</div>
       </a>
-      <a href="#lab1" class="card group">
-        <div class="text-3xl mb-2">📊</div>
-        <div class="font-semibold text-white">ЛР-1</div>
-        <div class="text-sm text-slate-400">Одномерная выборка</div>
+      <a href="#bdz3" class="card">
+        <div class="card-num">№ 3</div>
+        <div class="text-2xl mb-2">🧮</div>
+        <div class="font-serif font-semibold text-white text-lg">Большое домашнее задание №&nbsp;3</div>
+        <div class="text-sm text-slate-400 mt-1">Обработка и анализ статистических данных</div>
       </a>
-      <a href="#lab2" class="card group">
-        <div class="text-3xl mb-2">🎲</div>
-        <div class="font-semibold text-white">ЛР-2</div>
-        <div class="text-sm text-slate-400">Моделирование</div>
+      <a href="#lab1" class="card">
+        <div class="card-num">ЛР · 1</div>
+        <div class="text-2xl mb-2">📊</div>
+        <div class="font-serif font-semibold text-white text-lg">Лабораторная&nbsp;1</div>
+        <div class="text-sm text-slate-400 mt-1">Одномерная выборка</div>
       </a>
-      <a href="#lab3" class="card group">
-        <div class="text-3xl mb-2">📈</div>
-        <div class="font-semibold text-white">ЛР-3</div>
-        <div class="text-sm text-slate-400">Проверка гипотез</div>
+      <a href="#lab2" class="card">
+        <div class="card-num">ЛР · 2</div>
+        <div class="text-2xl mb-2">🎲</div>
+        <div class="font-serif font-semibold text-white text-lg">Лабораторная&nbsp;2</div>
+        <div class="text-sm text-slate-400 mt-1">Моделирование случайных величин</div>
       </a>
-      <a href="#lab4" class="card group col-span-2">
-        <div class="text-3xl mb-2">📉</div>
-        <div class="font-semibold text-white">ЛР-4</div>
-        <div class="text-sm text-slate-400">Линейная регрессия</div>
+      <a href="#lab3" class="card">
+        <div class="card-num">ЛР · 3</div>
+        <div class="text-2xl mb-2">📈</div>
+        <div class="font-serif font-semibold text-white text-lg">Лабораторная&nbsp;3</div>
+        <div class="text-sm text-slate-400 mt-1">Проверка гипотезы о законе распределения</div>
+      </a>
+      <a href="#lab4" class="card">
+        <div class="card-num">ЛР · 4</div>
+        <div class="text-2xl mb-2">📉</div>
+        <div class="font-serif font-semibold text-white text-lg">Лабораторная&nbsp;4</div>
+        <div class="text-sm text-slate-400 mt-1">Линейная регрессионная модель</div>
       </a>
     </div>
   </div>
 
   <div class="mt-12 grid md:grid-cols-3 gap-4">
     <div class="card-info">
-      <div class="text-accent font-medium text-sm mb-1">Режим презентации</div>
-      <div class="text-slate-300 text-sm">Чистый вид — задачи, решения, формулы и графики. Для демонстрации преподавателю.</div>
+      <div class="text-accent-light font-medium text-sm mb-1.5">🎬 Режим презентации</div>
+      <div class="text-slate-300 text-sm leading-relaxed">Чистый вид — задачи, решения, формулы и графики. Подходит для показа преподавателю.</div>
     </div>
     <div class="card-info">
-      <div class="text-accent font-medium text-sm mb-1">Режим редактирования</div>
-      <div class="text-slate-300 text-sm">Каждый блок кода можно редактировать и запускать прямо в браузере (Python через Pyodide).</div>
+      <div class="text-accent-light font-medium text-sm mb-1.5">✏️ Режим редактирования</div>
+      <div class="text-slate-300 text-sm leading-relaxed">Каждый блок кода редактируется и запускается прямо в браузере через Pyodide.</div>
     </div>
     <div class="card-info">
-      <div class="text-accent font-medium text-sm mb-1">Воспроизводимость</div>
-      <div class="text-slate-300 text-sm">Все вычисления — открытый код. Можно проверить, изменить, посмотреть промежуточные результаты.</div>
+      <div class="text-accent-light font-medium text-sm mb-1.5">🖨️ Печать в PDF</div>
+      <div class="text-slate-300 text-sm leading-relaxed">Кнопка «Печать» формирует светлую копию документа — можно сдать в распечатанном виде.</div>
     </div>
   </div>
 </section>
 
 <!-- ============== БДЗ-1 ============== -->
-<section id="bdz" class="page hidden">
+<section id="bdz1" class="page hidden">
   <div class="page-header">
-    <div class="text-accent-light text-sm font-medium mb-2">БОЛЬШОЕ ДОМАШНЕЕ ЗАДАНИЕ №1</div>
-    <h2 class="text-3xl md:text-4xl font-bold text-white">10 задач теории вероятностей</h2>
-    <p class="text-slate-400 mt-2">Вариант 16 · Миронов А.А.</p>
+    <div class="eyebrow mb-2">большое домашнее задание №&nbsp;1</div>
+    <h2 class="text-3xl md:text-4xl text-white">10 задач теории вероятностей</h2>
+    <p class="text-slate-400 mt-3 font-serif italic">Вариант 16 · Миронов А.А., группа ИКТ-23</p>
   </div>
-  <div id="bdz-content" class="space-y-6"></div>
+  <div id="bdz1-content" class="space-y-6"></div>
+</section>
+
+<!-- ============== БДЗ-3 (отчёт) ============== -->
+<section id="bdz3" class="page hidden">
+  <div class="page-header">
+    <div class="eyebrow mb-2">большое домашнее задание №&nbsp;3</div>
+    <h2 class="text-3xl md:text-4xl text-white">Обработка и анализ статистических данных</h2>
+    <p class="text-slate-400 mt-3 font-serif italic">расчётно-аналитический отчёт по трём частям · α = 0,05</p>
+  </div>
+  <div id="bdz3-content" class="space-y-6"></div>
 </section>
 
 <!-- ============== ЛР-1 ============== -->
 <section id="lab1" class="page hidden">
   <div class="page-header">
-    <div class="text-accent-light text-sm font-medium mb-2">ЛАБОРАТОРНАЯ РАБОТА №1</div>
-    <h2 class="text-3xl md:text-4xl font-bold text-white">Статистическая обработка одномерной выборки</h2>
-    <p class="text-slate-400 mt-2">Вариант 16 · n = 50 · выборка из приложения 1</p>
+    <div class="eyebrow mb-2">лабораторная работа №&nbsp;1</div>
+    <h2 class="text-3xl md:text-4xl text-white">Статистическая обработка одномерной выборки</h2>
+    <p class="text-slate-400 mt-3 font-serif italic">Вариант 16 · n = 50 · приложение&nbsp;1 практикума</p>
   </div>
   <div id="lab1-content" class="space-y-6"></div>
 </section>
@@ -179,9 +228,9 @@ tailwind.config = {
 <!-- ============== ЛР-2 ============== -->
 <section id="lab2" class="page hidden">
   <div class="page-header">
-    <div class="text-accent-light text-sm font-medium mb-2">ЛАБОРАТОРНАЯ РАБОТА №2</div>
-    <h2 class="text-3xl md:text-4xl font-bold text-white">Моделирование случайных величин</h2>
-    <p class="text-slate-400 mt-2">N(16, 16), R(16, 32), E(λ=3.2), а также χ², Стьюдента, Фишера</p>
+    <div class="eyebrow mb-2">лабораторная работа №&nbsp;2</div>
+    <h2 class="text-3xl md:text-4xl text-white">Моделирование случайных величин с заданным законом распределения</h2>
+    <p class="text-slate-400 mt-3 font-serif italic">$N(16, 16)$, $R(16, 32)$, $E(\lambda=3{,}2)$ + $\chi^2$, Стьюдента, Фишера</p>
   </div>
   <div id="lab2-content" class="space-y-6"></div>
 </section>
@@ -189,9 +238,9 @@ tailwind.config = {
 <!-- ============== ЛР-3 ============== -->
 <section id="lab3" class="page hidden">
   <div class="page-header">
-    <div class="text-accent-light text-sm font-medium mb-2">ЛАБОРАТОРНАЯ РАБОТА №3</div>
-    <h2 class="text-3xl md:text-4xl font-bold text-white">Проверка гипотезы о законе распределения</h2>
-    <p class="text-slate-400 mt-2">Доверительные интервалы · критерий χ² · α = 0.05</p>
+    <div class="eyebrow mb-2">лабораторная работа №&nbsp;3</div>
+    <h2 class="text-3xl md:text-4xl text-white">Проверка гипотезы о законе распределения генеральной совокупности</h2>
+    <p class="text-slate-400 mt-3 font-serif italic">доверительные интервалы · критерий $\chi^2$ · уровень значимости $\alpha = 0{,}05$</p>
   </div>
   <div id="lab3-content" class="space-y-6"></div>
 </section>
@@ -199,19 +248,21 @@ tailwind.config = {
 <!-- ============== ЛР-4 ============== -->
 <section id="lab4" class="page hidden">
   <div class="page-header">
-    <div class="text-accent-light text-sm font-medium mb-2">ЛАБОРАТОРНАЯ РАБОТА №4</div>
-    <h2 class="text-3xl md:text-4xl font-bold text-white">Анализ данных в линейной регрессионной модели</h2>
-    <p class="text-slate-400 mt-2">Двумерная выборка (X, Y), n = 50, α = 0.05</p>
+    <div class="eyebrow mb-2">лабораторная работа №&nbsp;4</div>
+    <h2 class="text-3xl md:text-4xl text-white">Анализ данных в линейной регрессионной модели</h2>
+    <p class="text-slate-400 mt-3 font-serif italic">двумерная выборка $(X, Y)$ · $n = 50$ · $\alpha = 0{,}05$</p>
   </div>
   <div id="lab4-content" class="space-y-6"></div>
 </section>
 
 </main>
 
-<footer class="border-t border-ink-800 mt-20 py-8 text-center text-sm text-slate-500">
+<footer class="border-t border-ink-800 mt-20 py-10 text-center text-sm text-slate-500">
   <div class="max-w-7xl mx-auto px-6">
-    Сделано для курса ТВиМС, МИЭТ · 2026. Все вычисления — Python (NumPy / SciPy / Matplotlib) и Pyodide.<br>
-    <a class="text-accent hover:underline" href="https://github.com" target="_blank">Исходный код на GitHub →</a>
+    <div class="font-serif italic mb-2">«Случайность — это математическая мера незнания.»</div>
+    <div>НИУ МИЭТ · кафедра высшей математики № 1 · ТВиМС · 2026</div>
+    <div class="mt-1">Все вычисления выполнены на Python (NumPy / SciPy / Matplotlib) и воспроизведены в браузере через Pyodide.</div>
+    <a class="inline-block mt-3 text-accent-light hover:underline" href="https://github.com/sanyarezko-art/tvms-bdz-labs" target="_blank">↗ исходный код на GitHub</a>
   </div>
 </footer>
 

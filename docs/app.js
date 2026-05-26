@@ -1,5 +1,6 @@
 // === Главный модуль ===
-import { renderBDZ } from "./pages/bdz.js";
+import { renderBDZ1 } from "./pages/bdz1.js";
+import { renderBDZ3 } from "./pages/bdz3.js";
 import { renderLab1 } from "./pages/lab1.js";
 import { renderLab2 } from "./pages/lab2.js";
 import { renderLab3 } from "./pages/lab3.js";
@@ -127,7 +128,7 @@ document.addEventListener("keydown", (e) => {
 });
 
 // ---- Маршрутизация ----
-const pages = ["home", "bdz", "lab1", "lab2", "lab3", "lab4"];
+const pages = ["home", "bdz1", "bdz3", "lab1", "lab2", "lab3", "lab4"];
 function navigate() {
   const id = (location.hash || "#home").slice(1).split("?")[0];
   const target = pages.includes(id) ? id : "home";
@@ -175,7 +176,8 @@ window.renderMathInDocument = function() {
 };
 
 // ---- Render pages ----
-renderBDZ(document.getElementById("bdz-content"));
+renderBDZ1(document.getElementById("bdz1-content"));
+renderBDZ3(document.getElementById("bdz3-content"));
 renderLab1(document.getElementById("lab1-content"));
 renderLab2(document.getElementById("lab2-content"));
 renderLab3(document.getElementById("lab3-content"));

@@ -1,4 +1,4 @@
-import { sectionBlock, figure, statsGrid } from "./_components.js";
+import { sectionBlock, figure, statsGrid, table, codeBlock, note, toc } from "./_components.js";
 import { D } from "./_data.js";
 
 const d = D.lab4;
@@ -11,173 +11,128 @@ export function renderLab4(container) {
   const ys = d.Y.map(v => v.toFixed(2)).join(", ");
 
   container.innerHTML = `
+  ${toc([
+    {text:"Исходные данные — парная выборка"},
+    {text:"Точечные характеристики, коэффициент корреляции"},
+    {text:"Проверка значимости коэффициента корреляции"},
+    {text:"ДИ для коэффициента корреляции"},
+    {text:"Уравнения линейной регрессии"},
+    {text:"Корреляционная таблица 7×7"},
+    {text:"Значимость регрессии (F-тест)"},
+    {text:"Сравнение математических ожиданий"},
+  ])}
+
   ${sectionBlock({
-    title: "1. Исходные данные",
-    subtitle: "Парная выборка $(x_i, y_i)$, $n=50$, приложение 2 практикума",
+    num:"1", title:"Исходные данные",
+    subtitle:"Парная выборка $(x_i, y_i)$, $n=50$, приложение 2 практикума",
     body: `
-      <h4 class="font-semibold text-white mb-1">X (вариант 16)</h4>
+      <h4 class="font-semibold text-white mt-1 mb-1">X (вариант 16):</h4>
       <pre class="text-xs font-mono bg-ink-950 border border-ink-800 rounded p-3 overflow-x-auto whitespace-pre-wrap text-slate-300">${xs}</pre>
-      <h4 class="font-semibold text-white mt-3 mb-1">Y (вариант 16)</h4>
+      <h4 class="font-semibold text-white mt-3 mb-1">Y (вариант 16):</h4>
       <pre class="text-xs font-mono bg-ink-950 border border-ink-800 rounded p-3 overflow-x-auto whitespace-pre-wrap text-slate-300">${ys}</pre>
-    `,
+    `
   })}
 
   ${sectionBlock({
-    title: "2. Числовые характеристики",
+    num:"2", title:"Точечные характеристики и коэффициент корреляции",
     body: `
       ${statsGrid([
-        {label:"$\\bar{x}$",  value:d.x_bar.toFixed(4)},
-        {label:"$\\bar{y}$",  value:d.y_bar.toFixed(4)},
-        {label:"$S_X$",       value:d.sX.toFixed(4)},
-        {label:"$S_Y$",       value:d.sY.toFixed(4)},
-        {label:"$\\text{cov}(X,Y)$", value:d.cov.toFixed(4)},
-        {label:"$r_{XY}$",    value:d.r.toFixed(4)},
+        {label:"$\\bar{x}$", value:d.mx.toFixed(4)},
+        {label:"$\\bar{y}$", value:d.my.toFixed(4)},
+        {label:"$s_x$", value:d.sx.toFixed(4)},
+        {label:"$s_y$", value:d.sy.toFixed(4)},
+        {label:"$\\mathrm{cov}(X,Y)$", value:d.cov.toFixed(4)},
+        {label:"$r_{xy}$", value:d.r.toFixed(4)},
       ])}
-      <p class="solution-text mt-3">
-        Коэффициент корреляции $r \\approx ${d.r.toFixed(3)}$ — сильная отрицательная линейная связь.
-      </p>
-    `,
-    code:
-`import numpy as np
-X = np.array([${d.X.join(",")}])
-Y = np.array([${d.Y.join(",")}])
-print(f"x̄ = {X.mean():.4f}, ȳ = {Y.mean():.4f}")
-print(f"S_X = {X.std(ddof=1):.4f}, S_Y = {Y.std(ddof=1):.4f}")
-cov = np.cov(X,Y, ddof=1)[0,1]
-r = cov / (X.std(ddof=1)*Y.std(ddof=1))
-print(f"cov = {cov:.4f}")
-print(f"r = {r:.4f}")`
+      <p class="solution-text mt-2">$|r| = ${Math.abs(d.r).toFixed(3)} > 0{,}9$ ⇒ <b>сильная отрицательная линейная связь</b> между $X$ и $Y$.</p>
+      ${codeBlock(`import numpy as np
+from scipy import stats
+X = np.array([${d.X.map(v=>v.toFixed(2)).join(", ")}])
+Y = np.array([${d.Y.map(v=>v.toFixed(2)).join(", ")}])
+print(f"mx={X.mean():.4f}, my={Y.mean():.4f}")
+print(f"sx={X.std(ddof=1):.4f}, sy={Y.std(ddof=1):.4f}")
+print(f"r = {np.corrcoef(X,Y)[0,1]:.4f}")`, "python")}
+    `
   })}
 
   ${sectionBlock({
-    title: "3. Гипотеза об отсутствии корреляции",
-    subtitle: "$H_0: \\rho_{XY}=0$ против $H_1: \\rho_{XY}\\neq 0$ при $\\alpha=0{,}05$",
+    num:"3", title:"Проверка значимости коэффициента корреляции",
     body: `
-      <p class="solution-text">
-        Статистика $t = \\dfrac{r\\sqrt{n-2}}{\\sqrt{1-r^2}}$.
-      </p>
+      <p class="solution-text">$H_0\\!: \\rho = 0$, $H_1\\!: \\rho \\ne 0$. Статистика: $T = r\\,\\sqrt{n-2}/\\sqrt{1-r^2} \\sim t(n-2)$.</p>
       ${statsGrid([
-        {label:"$t_{набл}$", value:d.t_stat.toFixed(4)},
-        {label:"$t_{крит}$ (n-2=48)", value:d.t_crit.toFixed(4)},
+        {label:"$T_{набл}$", value:d.T_corr.toFixed(4)},
+        {label:"$t_{0{,}975}(48)$", value:d.t_crit.toFixed(4)},
       ])}
-      <div class="answer-box">
-        $|t_{набл}| = ${Math.abs(d.t_stat).toFixed(2)} > t_{крит} = ${d.t_crit.toFixed(2)}$ → ${verdict(false)} ⇒ корреляция значима.
+      <p class="solution-text mt-2">$|T_{набл}| = ${Math.abs(d.T_corr).toFixed(2)} \\gg ${d.t_crit.toFixed(2)}$ ⇒ ${verdict(false)} — корреляция статистически значима.</p>
+    `
+  })}
+
+  ${sectionBlock({
+    num:"4", title:"Доверительный интервал для $\\rho$",
+    body: `
+      <p class="solution-text">Через преобразование Фишера: $Z = \\tfrac{1}{2}\\ln\\!\\dfrac{1+r}{1-r} \\sim N(z_\\rho, 1/(n-3))$.</p>
+      <p class="solution-text mt-2 text-center text-lg"><b>$\\rho \\in (${d.r_lo.toFixed(4)};\\ ${d.r_hi.toFixed(4)})$</b></p>
+    `
+  })}
+
+  ${sectionBlock({
+    num:"5", title:"Уравнения линейной регрессии",
+    body: `
+      <p class="solution-text">Метод наименьших квадратов: $\\hat{b}_{yx} = \\mathrm{cov}/s_x^2$, $\\hat{a}_{yx} = \\bar{y} - \\hat{b}_{yx}\\bar{x}$.</p>
+      <div class="grid md:grid-cols-2 gap-3 mt-2">
+        <div class="stat-cell"><div class="lbl">$Y$ на $X$</div><div class="val">$\\hat{y} = ${d.b_yx.toFixed(4)}\\,x + ${d.a_yx.toFixed(4)}$</div></div>
+        <div class="stat-cell"><div class="lbl">$X$ на $Y$</div><div class="val">$\\hat{x} = ${d.b_xy.toFixed(4)}\\,y + ${d.a_xy.toFixed(4)}$</div></div>
       </div>
-    `,
+      ${figure("./public/figures/lab4_scatter.png",
+        "<b>Рис. 4.1.</b> Диаграмма рассеяния и две линии регрессии. Угол между линиями отражает силу связи: при $|r|\\to 1$ линии сливаются")}
+      <p class="solution-text mt-2">Коэффициент детерминации $R^2 = r^2 = ${d.R2.toFixed(4)}$ ⇒ <b>${(d.R2*100).toFixed(1)}%</b> разброса $Y$ объясняется линейной зависимостью от $X$.</p>
+    `
   })}
 
   ${sectionBlock({
-    title: "4. Интервальная оценка коэффициента корреляции",
-    subtitle: "Преобразование Фишера",
+    num:"6", title:"Корреляционная таблица (группировка 7×7)",
     body: `
-      <p class="solution-text">
-        $z = \\frac{1}{2}\\ln\\frac{1+r}{1-r}$, $\\sigma_z = \\dfrac{1}{\\sqrt{n-3}}$, доверит. интервал для $z$ → обратное преобразование → интервал для $\\rho$.
-      </p>
-      <div class="answer-box">
-        $\\rho \\in (${d.r_lo.toFixed(4)};\\ ${d.r_hi.toFixed(4)})$ с доверительной вероятностью $0{,}95$.
-      </div>
-    `,
+      ${figure("./public/figures/lab4_corr_table.png",
+        "<b>Рис. 4.2.</b> Корреляционная таблица. Чёткая отрицательная диагональная структура подтверждает сильную обратную связь")}
+    `
   })}
 
   ${sectionBlock({
-    title: "5. Уравнения линейной регрессии",
+    num:"7", title:"Проверка значимости линейной регрессии (F-тест)",
     body: `
-      <p class="solution-text">
-        Метод наименьших квадратов: $a = \\dfrac{\\text{cov}(X,Y)}{S_X^2}$, $b = \\bar{y} - a\\bar{x}$.
-      </p>
-      <div class="answer-box">
-        <div class="mb-1"><b>$Y$ на $x$:</b>  $\\hat{y} = ${d.a_yx.toFixed(4)}\\,x + (${d.b_yx.toFixed(4)})$</div>
-        <div><b>$X$ на $y$:</b>  $\\hat{x} = ${d.a_xy.toFixed(4)}\\,y + ${d.b_xy.toFixed(4)}$</div>
-      </div>
-    `,
-  })}
-
-  ${sectionBlock({
-    title: "6. Диаграмма рассеяния и прямые регрессии",
-    body: `
-      <div class="presentation-only">${figure("./public/figures/lab4_scatter.png", "Диаграмма рассеяния и прямые регрессии $Y$ на $x$ (сплошная), $X$ на $y$ (пунктир).")}</div>
-    `,
-    code:
-`import numpy as np, matplotlib.pyplot as plt
-X = np.array([${d.X.join(",")}])
-Y = np.array([${d.Y.join(",")}])
-xb, yb = X.mean(), Y.mean()
-sX2 = X.var(ddof=1); sY2 = Y.var(ddof=1)
-cov = np.cov(X,Y, ddof=1)[0,1]
-a_yx = cov/sX2; b_yx = yb - a_yx*xb
-a_xy = cov/sY2; b_xy = xb - a_xy*yb
-r = cov/(np.sqrt(sX2)*np.sqrt(sY2))
-
-fig, ax = plt.subplots(figsize=(8,5))
-ax.scatter(X, Y, color="#6366f1", s=45, edgecolor="white", linewidth=1.1, alpha=0.85)
-xs = np.linspace(X.min(), X.max(), 100)
-ax.plot(xs, a_yx*xs + b_yx, color="#ef4444", lw=2.4, label=f"Y на x")
-ys = np.linspace(Y.min(), Y.max(), 100)
-ax.plot(a_xy*ys + b_xy, ys, "--", color="#10b981", lw=2.4, label=f"X на y")
-ax.set_title(f"Диаграмма рассеяния, r = {r:.3f}")
-ax.legend(frameon=False); plt.show()`
-  })}
-
-  ${sectionBlock({
-    title: "7. Коэффициент детерминации и доверительные интервалы",
-    body: `
+      <p class="solution-text">$H_0\\!: b = 0$ (нет линейной зависимости). $F = \\dfrac{SS_{рег}/1}{SS_{ост}/(n-2)} \\sim F(1, n-2)$.</p>
       ${statsGrid([
-        {label:"$R^2$", value:d.R2.toFixed(4)},
-        {label:"$s^2$ ошибок", value:d.s2_err.toFixed(4)},
-        {label:"ДИ для $a$", value:`(${d.ci_a[0].toFixed(3)}; ${d.ci_a[1].toFixed(3)})`},
-        {label:"ДИ для $b$", value:`(${d.ci_b[0].toFixed(3)}; ${d.ci_b[1].toFixed(3)})`},
-        {label:"ДИ для $\\sigma^2$", value:`(${d.ci_s2[0].toFixed(3)}; ${d.ci_s2[1].toFixed(3)})`},
+        {label:"$F_{набл}$", value:d.F.toFixed(2)},
+        {label:"$F_{крит}(0{,}95; 1; 48)$", value:d.F_crit.toFixed(4)},
+        {label:"$s^2$ остатков", value:d.s2_err.toFixed(4)},
       ])}
-      <p class="solution-text mt-2">
-        $R^2 = ${(d.R2*100).toFixed(1)}\\%$ — линия регрессии объясняет почти всю дисперсию $Y$.
-      </p>
-    `,
+      <p class="solution-text mt-2">$F_{набл} = ${d.F.toFixed(1)} \\gg F_{крит} = ${d.F_crit.toFixed(2)}$ ⇒ ${verdict(false)} — линейная модель статистически значима.</p>
+    `
   })}
 
   ${sectionBlock({
-    title: "8. Значимость линейной регрессии (F-тест)",
-    subtitle: "$F = \\dfrac{(SS_{tot}-SS_{res})/1}{s^2_{ош}}$ vs $F_{крит}(1, n-2)$",
+    num:"8", title:"Сравнение математических ожиданий $m_X$ и $m_Y$",
     body: `
-      ${statsGrid([
-        {label:"$F_{набл}$", value:d.F_stat.toFixed(4)},
-        {label:"$F_{крит}$", value:d.F_crit.toFixed(4)},
-      ])}
-      <div class="answer-box">
-        $F_{набл} = ${d.F_stat.toFixed(2)} \\gg F_{крит} = ${d.F_crit.toFixed(2)}$ → регрессия значима.
-      </div>
-    `,
-  })}
-
-  ${sectionBlock({
-    title: "9. Гипотеза о равенстве средних $H_0: m_X = m_Y$",
-    subtitle: "$t$-тест для парных наблюдений",
-    body: `
+      <p class="solution-text">Парный t-тест: $H_0\\!: m_X = m_Y$ (т.е. среднее разностей $D = X - Y$ равно нулю).</p>
       ${statsGrid([
         {label:"$t_{набл}$", value:d.t_pair.toFixed(4)},
-        {label:"$t_{крит}$", value:d.t_pair_crit.toFixed(4)},
+        {label:"$t_{0{,}975}(49)$", value:d.t_pair_crit.toFixed(4)},
       ])}
-      <div class="answer-box">
-        $|t_{набл}| = ${Math.abs(d.t_pair).toFixed(2)} > t_{крит} = ${d.t_pair_crit.toFixed(2)}$ → ${verdict(false)}, средние различаются.
-      </div>
-    `,
+      <p class="solution-text mt-2">$|t_{набл}| = ${Math.abs(d.t_pair).toFixed(2)} > ${d.t_pair_crit.toFixed(2)}$ ⇒ ${verdict(false)} — $m_X$ и $m_Y$ значимо различны.</p>
+    `
   })}
 
   ${sectionBlock({
-    title: "10. Группировка и корреляционная таблица (7×7)",
+    num:"▣", title:"Выводы",
     body: `
-      <div class="presentation-only">${figure("./public/figures/lab4_corr_table.png", "Корреляционная таблица 7×7 (частоты).")}</div>
-      <p class="solution-text mt-3">Числовые характеристики по группированной выборке:</p>
-      ${statsGrid([
-        {label:"$\\bar{x}_г$", value:d.grouped.mxg.toFixed(4)},
-        {label:"$\\bar{y}_г$", value:d.grouped.myg.toFixed(4)},
-        {label:"$S_{X,г}$",    value:d.grouped.sxg.toFixed(4)},
-        {label:"$S_{Y,г}$",    value:d.grouped.syg.toFixed(4)},
-        {label:"$r_г$",        value:d.grouped.rg.toFixed(4)},
-      ])}
-      <p class="solution-text mt-3">
-        Различия с негруппированными значениями невелики — группировка не сильно искажает оценки.
-      </p>
-    `,
+      <ul class="solution-text" style="list-style: disc; padding-left: 1.4rem;">
+        <li>$r = ${d.r.toFixed(3)}$ — сильная отрицательная линейная связь; ДИ: $(${d.r_lo.toFixed(3)};\\ ${d.r_hi.toFixed(3)})$.</li>
+        <li>Уравнение регрессии: $\\hat{y} = ${d.b_yx.toFixed(3)}\\,x + ${d.a_yx.toFixed(3)}$.</li>
+        <li>$R^2 = ${d.R2.toFixed(4)}$ — модель объясняет ${(d.R2*100).toFixed(1)}% дисперсии $Y$.</li>
+        <li>F-критерий: $F = ${d.F.toFixed(0)} \\gg ${d.F_crit.toFixed(2)}$ — регрессия высоко значима.</li>
+        <li>$m_X \\ne m_Y$: парный t-тест отвергает равенство.</li>
+      </ul>
+    `
   })}
   `;
 }

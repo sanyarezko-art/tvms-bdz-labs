@@ -220,6 +220,6 @@ for k, val in probs.items():
   },
 ];
 
-export function renderBDZ(container) {
+export function renderBDZ1(container) {
   container.innerHTML = tasks.map(t => taskBlock(t)).join("");
 }
