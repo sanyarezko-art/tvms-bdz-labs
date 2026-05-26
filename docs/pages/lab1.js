@@ -63,7 +63,7 @@ for v, c in zip(vals, cnts):
   ${sectionBlock({
     num:"3", title:"Группировка на 7 интервалов",
     body: `
-      <p class="solution-text">Длина интервала: $h = \\dfrac{x_\\max - x_\\min}{7} = \\dfrac{${d.R}}{7} = ${(d.R/7).toFixed(4)}$.</p>
+      <p class="solution-text">Длина интервала: $h = \\dfrac{x_{\\max} - x_{\\min}}{7} = \\dfrac{${d.R}}{7} = ${(d.R/7).toFixed(4)}$.</p>
       ${table(["№","Интервал","$n_i$","$w_i = n_i/n$","Центр $c_i$"], intRows)}
       ${note({title:"Замечание",
         body:"Граничные элементы выборки относятся к интервалу слева (стандартное правило); первый интервал включает левую границу."})}

@@ -70,7 +70,7 @@ print(f"r = {np.corrcoef(X,Y)[0,1]:.4f}")`, "python")}
   ${sectionBlock({
     num:"4", title:"Доверительный интервал для $\\rho$",
     body: `
-      <p class="solution-text">Через преобразование Фишера: $Z = \\tfrac{1}{2}\\ln\\!\\dfrac{1+r}{1-r} \\sim N(z_\\rho, 1/(n-3))$.</p>
+      <p class="solution-text">Через преобразование Фишера: $Z = \\tfrac{1}{2}\\ln\\!\\dfrac{1+r}{1-r} \\sim N(z_{\\rho}, 1/(n-3))$.</p>
       <p class="solution-text mt-2 text-center text-lg"><b>$\\rho \\in (${d.r_lo.toFixed(4)};\\ ${d.r_hi.toFixed(4)})$</b></p>
     `
   })}

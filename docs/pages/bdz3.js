@@ -28,7 +28,7 @@ export function renderBDZ3(container) {
       ["$x_i$","$n_i$","$w_i = n_i/n$"],
       L1.uniq.map((u,i)=>[u, L1.freq[i], (L1.freq[i]/50).toFixed(3)])
     )}
-    <p class="solution-text mt-3">Длина интервала $h = (x_\\max - x_\\min)/7 = ${L1.max-L1.min}/7 = ${((L1.max-L1.min)/7).toFixed(4)}$.</p>
+    <p class="solution-text mt-3">Длина интервала $h = (x_{\\max} - x_{\\min})/7 = ${L1.max-L1.min}/7 = ${((L1.max-L1.min)/7).toFixed(4)}$.</p>
     ${table(
       ["№","Интервал","$n_i$","$w_i$","центр $c_i$"],
       L1.counts.map((c,i)=>[i+1, `[${L1.edges[i].toFixed(3)}; ${L1.edges[i+1].toFixed(3)}]`, c, L1.rel[i].toFixed(3), L1.centers[i].toFixed(3)])
